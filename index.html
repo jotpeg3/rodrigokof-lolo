@@ -712,20 +712,6 @@
       line-height: 1.3;
     }
 
-    .qr-wrap {
-      display: inline-block;
-      padding: 8px;
-      background: var(--white);
-      border: 3px solid var(--red);
-      border-radius: 12px;
-    }
-
-    .qr-wrap img {
-      display: block;
-      width: 180px;
-      height: 180px;
-    }
-
     .btn-camera {
       display: inline-flex;
       align-items: center;
@@ -828,10 +814,7 @@
 
     <section class="qr-section" aria-labelledby="qr-title">
       <h3 id="qr-title">📷 Foto da missão</h3>
-      <p>Escaneie o QR Code e tire uma foto com a moldura da Patrulha Canina!</p>
-      <div class="qr-wrap">
-        <img id="qr-image" width="180" height="180" alt="QR Code para abrir a câmera temática">
-      </div>
+      <p>Tire uma foto com a moldura da Patrulha Canina!</p>
       <a class="btn-camera" id="qr-camera-link" href="foto.html">Abrir câmera temática</a>
     </section>
 
@@ -953,15 +936,10 @@
       var toggle = document.getElementById("music-toggle");
       var STORAGE_KEY = "lolo-music-on";
 
-      var cameraUrl = new URL("foto.html", window.location.href).href;
-      var qrImg = document.getElementById("qr-image");
       var cameraLink = document.getElementById("qr-camera-link");
-      if (qrImg) {
-        qrImg.src =
-          "https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=8&color=0a4ea3&bgcolor=b7d9ec&data=" +
-          encodeURIComponent(cameraUrl);
+      if (cameraLink) {
+        cameraLink.href = new URL("foto.html", window.location.href).href;
       }
-      if (cameraLink) cameraLink.href = cameraUrl;
 
       function hideOverlay() {
         overlay.classList.add("is-hidden");
