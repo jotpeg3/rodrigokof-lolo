@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#b7d9ec">
+  <title>Foto da missão — José Lorenzo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --bg-baby: #b7d9ec;
+      --blue-dark: #0a4ea3;
+      --blue-mid: #1e6fd4;
+      --red: #e63946;
+      --yellow: #ffcc00;
+      --white: #fff;
+    }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: "Nunito", Arial, sans-serif;
+      background: var(--bg-baby);
+      color: var(--blue-dark);
+    }
+    .page {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 12px 10px 24px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 1.1rem;
+      text-align: center;
+      color: var(--red);
+      text-transform: uppercase;
+    }
+    .hint {
+      margin: 0 0 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.35;
+    }
+    .camera-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      max-height: 70vh;
+      margin: 0 auto 12px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      border: 4px solid var(--red);
+      box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    }
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .frame-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .frame-top {
+      padding: 10px 8px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(230,57,70,.92), rgba(230,57,70,.75));
+      border-bottom: 4px solid var(--yellow);
+    }
+    .frame-top span {
+      display: block;
+      font-size: clamp(0.85rem, 4vw, 1rem);
+      font-weight: 900;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-shadow: 2px 2px 0 var(--blue-dark);
+    }
+    .frame-top .sub {
+      margin-top: 2px;
+      font-size: 0.65rem;
+      color: var(--yellow);
+      letter-spacing: 0.12em;
+    }
+    .frame-sides {
+      flex: 1;
+      border-left: 12px solid var(--blue-dark);
+      border-right: 12px solid var(--blue-dark);
+      margin: 0;
+      box-shadow: inset 0 0 0 3px var(--yellow);
+    }
+    .frame-bottom {
+      padding: 8px;
+      text-align: center;
+      background: linear-gradient(0deg, rgba(10,78,163,.9), rgba(10,78,163,.7));
+      border-top: 4px solid var(--yellow);
+      font-size: 1.5rem;
+      letter-spacing: 0.2em;
+    }
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 900;
+      border-radius: 14px;
+      border: 3px solid var(--yellow);
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-snap {
+      color: var(--white);
+      background: linear-gradient(180deg, var(--red), #c1121f);
+      box-shadow: 0 4px 0 rgba(0,0,0,.2);
+    }
+    .btn-snap:active { transform: translateY(3px); box-shadow: none; }
+    .btn-snap:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-back {
+      color: var(--blue-dark);
+      background: var(--white);
+      border-color: var(--blue-mid);
+    }
+    .preview {
+      display: none;
+      margin-top: 12px;
+      text-align: center;
+    }
+    .preview.is-visible { display: block; }
+    .preview img {
+      max-width: 100%;
+      border-radius: 12px;
+      border: 3px solid var(--red);
+    }
+    .btn-download {
+      margin-top: 8px;
+      color: var(--white);
+      background: linear-gradient(180deg, var(--blue-mid), var(--blue-dark));
+    }
+    .error {
+      display: none;
+      padding: 12px;
+      margin-bottom: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-align: center;
+      background: #fff3cd;
+      border: 2px solid var(--yellow);
+      border-radius: 10px;
+    }
+    .error.is-visible { display: block; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>📷 Foto da missão</h1>
+    <p class="hint">Aponte para o aniversariante e tire a foto com a moldura da Patrulha Canina!</p>
+
+    <p class="error" id="error"></p>
+
+    <div class="camera-box" id="camera-box">
+      <video id="video" playsinline autoplay muted aria-label="Câmera"></video>
+      <div class="frame-overlay" aria-hidden="true">
+        <div class="frame-top">
+          <span>José Lorenzo</span>
+          <span class="sub">Patrulha Canina 🐾</span>
+        </div>
+        <div class="frame-sides"></div>
+        <div class="frame-bottom">🐾 🐕 🚒</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn btn-snap" id="btn-snap" disabled>📸 Tirar foto</button>
+      <a class="btn btn-back" href="index.html">← Voltar ao convite</a>
+    </div>
+
+    <div class="preview" id="preview">
+      <img id="preview-img" alt="Sua foto da missão">
+      <a class="btn btn-download" id="btn-download" download="jose-lorenzo-missao.png">⬇ Salvar foto</a>
+    </div>
+  </div>
+
+  <canvas id="canvas" hidden></canvas>
+
+  <script>
+    (function () {
+      var video = document.getElementById("video");
+      var canvas = document.getElementById("canvas");
+      var btnSnap = document.getElementById("btn-snap");
+      var preview = document.getElementById("preview");
+      var previewImg = document.getElementById("preview-img");
+      var btnDownload = document.getElementById("btn-download");
+      var errorEl = document.getElementById("error");
+      var stream = null;
+
+      function showError(msg) {
+        errorEl.textContent = msg;
+        errorEl.classList.add("is-visible");
+      }
+
+      function drawFrame(ctx, w, h) {
+        var pad = Math.round(w * 0.04);
+        var topH = Math.round(h * 0.14);
+        var botH = Math.round(h * 0.1);
+
+        ctx.fillStyle = "rgba(230, 57, 70, 0.92)";
+        ctx.fillRect(0, 0, w, topH);
+        ctx.fillStyle = "#ffcc00";
+        ctx.fillRect(0, topH - 4, w, 4);
+
+        ctx.fillStyle = "rgba(10, 78, 163, 0.88)";
+        ctx.fillRect(0, h - botH, w, botH);
+        ctx.fillStyle = "#ffcc00";
+        ctx.fillRect(0, h - botH, w, 4);
+
+        ctx.fillStyle = "#0a4ea3";
+        ctx.fillRect(0, topH, pad, h - topH - botH);
+        ctx.fillRect(w - pad, topH, pad, h - topH - botH);
+
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "900 " + Math.round(w * 0.07) + "px Nunito, Arial, sans-serif";
+        ctx.fillText("JOSÉ LORENZO", w / 2, topH * 0.45);
+        ctx.fillStyle = "#ffcc00";
+        ctx.font = "800 " + Math.round(w * 0.035) + "px Nunito, Arial, sans-serif";
+        ctx.fillText("PATRULHA CANINA 🐾", w / 2, topH * 0.78);
+
+        ctx.font = Math.round(w * 0.08) + "px Arial";
+        ctx.fillText("🐾 🐕 🚒", w / 2, h - botH * 0.55);
+      }
+
+      function startCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          showError("Seu navegador não suporta câmera. Tente pelo Chrome ou Safari no celular.");
+          return;
+        }
+        navigator.mediaDevices
+          .getUserMedia({
+            video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 1600 } },
+            audio: false
+          })
+          .then(function (s) {
+            stream = s;
+            video.srcObject = s;
+            btnSnap.disabled = false;
+          })
+          .catch(function () {
+            showError("Permita o acesso à câmera nas configurações do navegador e recarregue a página.");
+          });
+      }
+
+      btnSnap.addEventListener("click", function () {
+        var w = video.videoWidth;
+        var h = video.videoHeight;
+        if (!w || !h) return;
+
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, w, h);
+        drawFrame(ctx, w, h);
+
+        var dataUrl = canvas.toDataURL("image/png");
+        previewImg.src = dataUrl;
+        btnDownload.href = dataUrl;
+        preview.classList.add("is-visible");
+        preview.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
+
+      startCamera();
+
+      window.addEventListener("pagehide", function () {
+        if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
+      });
+    })();
+  </script>
+</body>
+</html>
