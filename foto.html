@@ -12,8 +12,11 @@
       --bg-baby: #b7d9ec;
       --blue-dark: #0a4ea3;
       --blue-mid: #1e6fd4;
+      --blue-light: #5eb8ff;
       --red: #e63946;
+      --red-dark: #c1121f;
       --yellow: #ffcc00;
+      --silver: #d8d8d8;
       --white: #fff;
     }
     body {
@@ -36,7 +39,7 @@
       text-transform: uppercase;
     }
     .hint {
-      margin: 0 0 12px;
+      margin: 0 0 10px;
       font-size: 0.8rem;
       font-weight: 700;
       text-align: center;
@@ -46,62 +49,67 @@
       position: relative;
       width: 100%;
       aspect-ratio: 3 / 4;
-      max-height: 70vh;
-      margin: 0 auto 12px;
-      border-radius: 16px;
+      max-height: 62vh;
+      margin: 0 auto 10px;
+      border-radius: 20px;
       overflow: hidden;
-      background: #000;
-      border: 4px solid var(--red);
-      box-shadow: 0 6px 20px rgba(0,0,0,.25);
+      background: #111;
+      box-shadow: 0 8px 24px rgba(0,0,0,.28);
     }
     #video {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    .frame-overlay {
+    #video.is-front {
+      transform: scaleX(-1);
+    }
+    .frame-svg {
       position: absolute;
       inset: 0;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
     }
-    .frame-top {
+    .btn-flip {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 5;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      font-size: 1.35rem;
+      line-height: 1;
+      background: var(--white);
+      border: 3px solid var(--yellow);
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,.35);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .camera-tools {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .btn-tool {
       padding: 10px 8px;
-      text-align: center;
-      background: linear-gradient(180deg, rgba(230,57,70,.92), rgba(230,57,70,.75));
-      border-bottom: 4px solid var(--yellow);
-    }
-    .frame-top span {
-      display: block;
-      font-size: clamp(0.85rem, 4vw, 1rem);
+      font-family: inherit;
+      font-size: 0.78rem;
       font-weight: 900;
+      color: var(--blue-dark);
+      background: var(--white);
+      border: 2px solid var(--blue-mid);
+      border-radius: 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-tool.is-active {
       color: var(--white);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      text-shadow: 2px 2px 0 var(--blue-dark);
-    }
-    .frame-top .sub {
-      margin-top: 2px;
-      font-size: 0.65rem;
-      color: var(--yellow);
-      letter-spacing: 0.12em;
-    }
-    .frame-sides {
-      flex: 1;
-      border-left: 12px solid var(--blue-dark);
-      border-right: 12px solid var(--blue-dark);
-      margin: 0;
-      box-shadow: inset 0 0 0 3px var(--yellow);
-    }
-    .frame-bottom {
-      padding: 8px;
-      text-align: center;
-      background: linear-gradient(0deg, rgba(10,78,163,.9), rgba(10,78,163,.7));
-      border-top: 4px solid var(--yellow);
-      font-size: 1.5rem;
-      letter-spacing: 0.2em;
+      background: var(--blue-mid);
+      border-color: var(--yellow);
     }
     .actions {
       display: flex;
@@ -127,7 +135,7 @@
     }
     .btn-snap {
       color: var(--white);
-      background: linear-gradient(180deg, var(--red), #c1121f);
+      background: linear-gradient(180deg, var(--red), var(--red-dark));
       box-shadow: 0 4px 0 rgba(0,0,0,.2);
     }
     .btn-snap:active { transform: translateY(3px); box-shadow: none; }
@@ -146,7 +154,8 @@
     .preview img {
       max-width: 100%;
       border-radius: 12px;
-      border: 3px solid var(--red);
+      border: 4px solid var(--red);
+      box-shadow: 0 4px 16px rgba(0,0,0,.2);
     }
     .btn-download {
       margin-top: 8px;
@@ -170,20 +179,58 @@
 <body>
   <div class="page">
     <h1>📷 Foto da missão</h1>
-    <p class="hint">Aponte para o aniversariante e tire a foto com a moldura da Patrulha Canina!</p>
+    <p class="hint">Tire sua foto com a moldura especial da Patrulha Canina!</p>
 
     <p class="error" id="error"></p>
 
+    <div class="camera-tools">
+      <button type="button" class="btn-tool is-active" id="btn-cam-back" data-mode="environment">📷 Traseira</button>
+      <button type="button" class="btn-tool" id="btn-cam-front" data-mode="user">🤳 Frontal</button>
+    </div>
+
     <div class="camera-box" id="camera-box">
       <video id="video" playsinline autoplay muted aria-label="Câmera"></video>
-      <div class="frame-overlay" aria-hidden="true">
-        <div class="frame-top">
-          <span>José Lorenzo</span>
-          <span class="sub">Patrulha Canina 🐾</span>
-        </div>
-        <div class="frame-sides"></div>
-        <div class="frame-bottom">🐾 🐕 🚒</div>
-      </div>
+      <svg class="frame-svg" viewBox="0 0 100 133" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#ef4f5a"/>
+            <stop offset="100%" stop-color="#c1121f"/>
+          </linearGradient>
+          <linearGradient id="barGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#1e6fd4"/>
+            <stop offset="100%" stop-color="#0a4ea3"/>
+          </linearGradient>
+        </defs>
+        <!-- borda externa amarela -->
+        <rect x="1" y="1" width="98" height="131" rx="6" fill="none" stroke="#ffcc00" stroke-width="2.2"/>
+        <rect x="3.5" y="3.5" width="93" height="126" rx="5" fill="none" stroke="#e63946" stroke-width="1.5"/>
+        <!-- escudo topo -->
+        <path d="M50 5 L78 16 L78 38 Q78 48 50 54 Q22 48 22 38 L22 16 Z" fill="url(#shieldGrad)" stroke="#d8d8d8" stroke-width="1.2"/>
+        <path d="M50 8 L74 17 L74 36 Q74 44 50 49 Q26 44 26 36 L26 17 Z" fill="none" stroke="#ffcc00" stroke-width="0.8"/>
+        <!-- faixas laterais -->
+        <rect x="0" y="52" width="9" height="58" fill="url(#barGrad)"/>
+        <rect x="91" y="52" width="9" height="58" fill="url(#barGrad)"/>
+        <rect x="0" y="52" width="9" height="58" fill="none" stroke="#ffcc00" stroke-width="0.6"/>
+        <rect x="91" y="52" width="9" height="58" fill="none" stroke="#ffcc00" stroke-width="0.6"/>
+        <!-- patinhas laterais -->
+        <g fill="#ffcc00" opacity="0.85">
+          <ellipse cx="4.5" cy="62" rx="2" ry="1.5"/><circle cx="2.5" cy="59" r="0.9"/><circle cx="4.5" cy="58" r="0.9"/><circle cx="6.5" cy="59" r="0.9"/>
+          <ellipse cx="95.5" cy="72" rx="2" ry="1.5"/><circle cx="93.5" cy="69" r="0.9"/><circle cx="95.5" cy="68" r="0.9"/><circle cx="97.5" cy="69" r="0.9"/>
+          <ellipse cx="4.5" cy="98" rx="2" ry="1.5"/><circle cx="2.5" cy="95" r="0.9"/><circle cx="4.5" cy="94" r="0.9"/><circle cx="6.5" cy="95" r="0.9"/>
+        </g>
+        <!-- barra inferior -->
+        <path d="M0 108 L100 108 L100 133 L0 133 Z" fill="url(#barGrad)"/>
+        <rect x="0" y="106" width="100" height="3" fill="#ffcc00"/>
+        <!-- badge inferior -->
+        <ellipse cx="50" cy="120" rx="28" ry="9" fill="#e63946" stroke="#ffcc00" stroke-width="1"/>
+        <text x="50" y="123" text-anchor="middle" fill="#fff" font-size="5.5" font-weight="900" font-family="Nunito,Arial,sans-serif">MISSÃO CUMPRIDA</text>
+        <!-- textos (SVG) -->
+        <text x="50" y="28" text-anchor="middle" fill="#fff" font-size="7" font-weight="900" font-family="Nunito,Arial,sans-serif">JOSÉ</text>
+        <text x="50" y="36" text-anchor="middle" fill="#fff" font-size="7" font-weight="900" font-family="Nunito,Arial,sans-serif">LORENZO</text>
+        <text x="50" y="44" text-anchor="middle" fill="#ffcc00" font-size="3.8" font-weight="800" font-family="Nunito,Arial,sans-serif">PATRULHA CANINA</text>
+        <text x="50" y="49" text-anchor="middle" fill="#fff" font-size="4" font-family="Arial">🐾</text>
+      </svg>
+      <button type="button" class="btn-flip" id="btn-flip" aria-label="Trocar câmera" title="Trocar câmera">🔄</button>
     </div>
 
     <div class="actions">
@@ -204,67 +251,156 @@
       var video = document.getElementById("video");
       var canvas = document.getElementById("canvas");
       var btnSnap = document.getElementById("btn-snap");
+      var btnFlip = document.getElementById("btn-flip");
+      var btnCamBack = document.getElementById("btn-cam-back");
+      var btnCamFront = document.getElementById("btn-cam-front");
       var preview = document.getElementById("preview");
       var previewImg = document.getElementById("preview-img");
       var btnDownload = document.getElementById("btn-download");
       var errorEl = document.getElementById("error");
       var stream = null;
+      var facingMode = "environment";
 
       function showError(msg) {
         errorEl.textContent = msg;
         errorEl.classList.add("is-visible");
       }
 
+      function setActiveCamButton() {
+        var isFront = facingMode === "user";
+        btnCamFront.classList.toggle("is-active", isFront);
+        btnCamBack.classList.toggle("is-active", !isFront);
+        video.classList.toggle("is-front", isFront);
+      }
+
+      function stopStream() {
+        if (stream) {
+          stream.getTracks().forEach(function (t) { t.stop(); });
+          stream = null;
+        }
+      }
+
+      function drawPaw(ctx, x, y, scale) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(scale, scale);
+        ctx.fillStyle = "#ffcc00";
+        ctx.beginPath();
+        ctx.ellipse(0, 3, 8, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+        [[-6,-2],[0,-4],[6,-2],[-3,-7],[3,-7]].forEach(function (p) {
+          ctx.beginPath();
+          ctx.arc(p[0], p[1], 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.restore();
+      }
+
       function drawFrame(ctx, w, h) {
-        var pad = Math.round(w * 0.04);
-        var topH = Math.round(h * 0.14);
-        var botH = Math.round(h * 0.1);
+        ctx.save();
+        ctx.scale(w / 100, h / 133);
 
-        ctx.fillStyle = "rgba(230, 57, 70, 0.92)";
-        ctx.fillRect(0, 0, w, topH);
+        ctx.strokeStyle = "#ffcc00";
+        ctx.lineWidth = 2.2;
+        ctx.strokeRect(1, 1, 98, 131);
+        ctx.strokeStyle = "#e63946";
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(3.5, 3.5, 93, 126);
+
+        var shield = new Path2D("M50 5 L78 16 L78 38 Q78 48 50 54 Q22 48 22 38 L22 16 Z");
+        var gShield = ctx.createLinearGradient(50, 5, 50, 54);
+        gShield.addColorStop(0, "#ef4f5a");
+        gShield.addColorStop(1, "#c1121f");
+        ctx.fillStyle = gShield;
+        ctx.fill(shield);
+        ctx.strokeStyle = "#d8d8d8";
+        ctx.lineWidth = 1.2;
+        ctx.stroke(shield);
+
+        var gBar = ctx.createLinearGradient(0, 52, 0, 133);
+        gBar.addColorStop(0, "#1e6fd4");
+        gBar.addColorStop(1, "#0a4ea3");
+        ctx.fillStyle = gBar;
+        ctx.fillRect(0, 52, 9, 58);
+        ctx.fillRect(91, 52, 9, 58);
+        ctx.fillRect(0, 108, 100, 25);
         ctx.fillStyle = "#ffcc00";
-        ctx.fillRect(0, topH - 4, w, 4);
+        ctx.fillRect(0, 106, 100, 3);
 
-        ctx.fillStyle = "rgba(10, 78, 163, 0.88)";
-        ctx.fillRect(0, h - botH, w, botH);
-        ctx.fillStyle = "#ffcc00";
-        ctx.fillRect(0, h - botH, w, 4);
-
-        ctx.fillStyle = "#0a4ea3";
-        ctx.fillRect(0, topH, pad, h - topH - botH);
-        ctx.fillRect(w - pad, topH, pad, h - topH - botH);
+        ctx.beginPath();
+        ctx.ellipse(50, 120, 28, 9, 0, 0, Math.PI * 2);
+        ctx.fillStyle = "#e63946";
+        ctx.fill();
+        ctx.strokeStyle = "#ffcc00";
+        ctx.lineWidth = 1;
+        ctx.stroke();
 
         ctx.textAlign = "center";
         ctx.fillStyle = "#ffffff";
-        ctx.font = "900 " + Math.round(w * 0.07) + "px Nunito, Arial, sans-serif";
-        ctx.fillText("JOSÉ LORENZO", w / 2, topH * 0.45);
+        ctx.font = "900 7px Nunito, Arial, sans-serif";
+        ctx.fillText("JOSÉ", 50, 28);
+        ctx.fillText("LORENZO", 50, 36);
         ctx.fillStyle = "#ffcc00";
-        ctx.font = "800 " + Math.round(w * 0.035) + "px Nunito, Arial, sans-serif";
-        ctx.fillText("PATRULHA CANINA 🐾", w / 2, topH * 0.78);
+        ctx.font = "800 3.8px Nunito, Arial, sans-serif";
+        ctx.fillText("PATRULHA CANINA", 50, 44);
+        ctx.fillStyle = "#fff";
+        ctx.font = "900 5.5px Nunito, Arial, sans-serif";
+        ctx.fillText("MISSÃO CUMPRIDA", 50, 123);
 
-        ctx.font = Math.round(w * 0.08) + "px Arial";
-        ctx.fillText("🐾 🐕 🚒", w / 2, h - botH * 0.55);
+        ctx.restore();
+
+        drawPaw(ctx, w * 0.045, h * 0.48, w * 0.018);
+        drawPaw(ctx, w * 0.955, h * 0.55, w * 0.018);
+        drawPaw(ctx, w * 0.045, h * 0.75, w * 0.018);
       }
 
-      function startCamera() {
+      function startCamera(mode) {
+        facingMode = mode || facingMode;
+        setActiveCamButton();
+        stopStream();
+        btnSnap.disabled = true;
+
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          showError("Seu navegador não suporta câmera. Tente pelo Chrome ou Safari no celular.");
+          showError("Seu navegador não suporta câmera. Use Chrome ou Safari no celular.");
           return;
         }
+
         navigator.mediaDevices
           .getUserMedia({
-            video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 1600 } },
+            video: {
+              facingMode: { exact: facingMode }
+            },
             audio: false
+          })
+          .catch(function () {
+            return navigator.mediaDevices.getUserMedia({
+              video: { facingMode: facingMode },
+              audio: false
+            });
           })
           .then(function (s) {
             stream = s;
             video.srcObject = s;
             btnSnap.disabled = false;
+            errorEl.classList.remove("is-visible");
           })
           .catch(function () {
-            showError("Permita o acesso à câmera nas configurações do navegador e recarregue a página.");
+            if (facingMode === "environment") {
+              facingMode = "user";
+              setActiveCamButton();
+              return startCamera("user");
+            }
+            showError("Não foi possível abrir a câmera. Permita o acesso e recarregue a página.");
           });
       }
+
+      function flipCamera() {
+        startCamera(facingMode === "environment" ? "user" : "environment");
+      }
+
+      btnCamBack.addEventListener("click", function () { startCamera("environment"); });
+      btnCamFront.addEventListener("click", function () { startCamera("user"); });
+      btnFlip.addEventListener("click", flipCamera);
 
       btnSnap.addEventListener("click", function () {
         var w = video.videoWidth;
@@ -274,7 +410,16 @@
         canvas.width = w;
         canvas.height = h;
         var ctx = canvas.getContext("2d");
-        ctx.drawImage(video, 0, 0, w, h);
+
+        if (facingMode === "user") {
+          ctx.translate(w, 0);
+          ctx.scale(-1, 1);
+          ctx.drawImage(video, 0, 0, w, h);
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+        } else {
+          ctx.drawImage(video, 0, 0, w, h);
+        }
+
         drawFrame(ctx, w, h);
 
         var dataUrl = canvas.toDataURL("image/png");
@@ -284,10 +429,10 @@
         preview.scrollIntoView({ behavior: "smooth", block: "nearest" });
       });
 
-      startCamera();
+      startCamera("environment");
 
       window.addEventListener("pagehide", function () {
-        if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
+        stopStream();
       });
     })();
   </script>
