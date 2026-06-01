@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0a4ea3">
+  <meta name="theme-color" content="#b7d9ec">
   <meta name="description" content="Convite de aniversário — José Lorenzo. Patrulha Canina, 21/06/2026 às 16:30h.">
   <title>Convite — José Lorenzo 🐾</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +13,7 @@
     *, *::before, *::after { box-sizing: border-box; }
 
     :root {
+      --bg-baby: #b7d9ec;
       --blue-dark: #0a4ea3;
       --blue-mid: #1e6fd4;
       --blue-light: #3d9bff;
@@ -36,8 +37,8 @@
       margin: 0;
       min-height: 100dvh;
       font-family: "Nunito", Arial, sans-serif;
-      background: var(--blue-dark);
-      color: var(--white);
+      background: var(--bg-baby);
+      color: var(--blue-dark);
       line-height: 1.4;
     }
 
@@ -47,8 +48,8 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      opacity: 0.12;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cellipse fill='%23fff' cx='24' cy='34' rx='8' ry='6'/%3E%3Ccircle fill='%23fff' cx='12' cy='22' r='4'/%3E%3Ccircle fill='%23fff' cx='24' cy='18' r='4'/%3E%3Ccircle fill='%23fff' cx='36' cy='22' r='4'/%3E%3Ccircle fill='%23fff' cx='18' cy='12' r='3.5'/%3E%3Ccircle fill='%23fff' cx='30' cy='12' r='3.5'/%3E%3C/svg%3E");
+      opacity: 0.2;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cellipse fill='%230a4ea3' cx='24' cy='34' rx='8' ry='6'/%3E%3Ccircle fill='%230a4ea3' cx='12' cy='22' r='4'/%3E%3Ccircle fill='%230a4ea3' cx='24' cy='18' r='4'/%3E%3Ccircle fill='%23fff' cx='36' cy='22' r='4'/%3E%3Ccircle fill='%230a4ea3' cx='18' cy='12' r='3.5'/%3E%3Ccircle fill='%230a4ea3' cx='30' cy='12' r='3.5'/%3E%3C/svg%3E");
       background-size: 56px 56px;
       z-index: 0;
     }
@@ -357,33 +358,166 @@
     .mission-text .marshall { color: var(--red); }
     .mission-text .skye { color: #ff9ecd; }
 
-    /* —— Footer grid —— */
-    .footer-grid .info-box.gift {
-      background: linear-gradient(180deg, var(--red), var(--red-dark));
-      text-align: left;
-      padding: 10px 10px;
-    }
-
-    .footer-grid .info-box.gift .label,
+    /* —— Botão presente + RSVP —— */
     .footer-grid .info-box.rsvp .label {
       text-align: center;
       margin-bottom: 8px;
       font-size: 0.64rem;
     }
 
-    .gift-row {
+    .btn-gift {
       display: flex;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
       gap: 6px;
-      margin-bottom: 6px;
-      font-size: 0.72rem;
-      font-weight: 800;
-      line-height: 1.2;
+      width: 100%;
+      min-height: 100%;
+      padding: 14px 10px;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--white);
+      background: linear-gradient(180deg, var(--red) 0%, var(--red-dark) 100%);
+      border: 3px solid var(--yellow);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 0 rgba(0,0,0,.2);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .gift-row:last-child { margin-bottom: 0; }
+    .btn-gift .gift-icon {
+      font-size: 1.75rem;
+      line-height: 1;
+    }
 
-    .gift-row .ico { font-size: 1rem; flex-shrink: 0; }
+    .btn-gift:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 rgba(0,0,0,.2);
+    }
+
+    /* —— Modal presentes —— */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(10, 40, 100, 0.55);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .modal-overlay.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      position: relative;
+      width: min(340px, 100%);
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 22px 18px 18px;
+      background: var(--white);
+      border: 4px solid var(--red);
+      border-radius: 18px;
+      box-shadow: 0 12px 32px rgba(0,0,0,.25);
+      transform: scale(0.85) translateY(20px);
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1), opacity 0.3s ease;
+    }
+
+    .modal-overlay.is-open .modal-card {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      font-size: 1.5rem;
+      line-height: 1;
+      color: var(--blue-dark);
+      background: var(--bg-baby);
+      border: 2px solid var(--blue-mid);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .modal-title {
+      margin: 0 0 14px;
+      font-size: 1.1rem;
+      font-weight: 900;
+      text-align: center;
+      color: var(--red);
+      text-transform: uppercase;
+    }
+
+    .modal-gift-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: var(--bg-baby);
+      border-radius: 12px;
+      border: 2px dashed var(--blue-mid);
+      animation: gift-pop 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) backwards;
+    }
+
+    .modal-gift-item:nth-child(2) { animation-delay: 0.08s; }
+    .modal-gift-item:nth-child(3) { animation-delay: 0.16s; }
+
+    @keyframes gift-pop {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-gift-item .ico {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .modal-gift-item p {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--blue-dark);
+      line-height: 1.3;
+    }
+
+    .modal-ok {
+      display: block;
+      width: 100%;
+      margin-top: 6px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 900;
+      color: var(--white);
+      background: linear-gradient(180deg, var(--blue-mid), var(--blue-dark));
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 rgba(0,0,0,.2);
+    }
 
     .rsvp-phone {
       margin: 6px 0 0;
@@ -439,8 +573,17 @@
 
     @media (min-width: 380px) {
       :root { --gap: 12px; }
-      .gift-row { font-size: 0.76rem; }
+      .btn-gift { font-size: 0.82rem; }
       .mission-text { font-size: 0.82rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .modal-overlay,
+      .modal-card,
+      .modal-gift-item {
+        transition: none;
+        animation: none;
+      }
     }
   </style>
 </head>
@@ -532,17 +675,10 @@
     </section>
 
     <div class="grid-2 footer-grid">
-      <div class="info-box gift">
-        <span class="label">Sugestão de presente</span>
-        <div class="gift-row">
-          <span class="ico">🎁👟</span>
-          <span>Calçado tamanho 25</span>
-        </div>
-        <div class="gift-row">
-          <span class="ico">👕</span>
-          <span>Roupas tamanho 3 ou 4 anos</span>
-        </div>
-      </div>
+      <button type="button" class="btn-gift" id="btn-gift" aria-haspopup="dialog" aria-controls="gift-modal">
+        <span class="gift-icon" aria-hidden="true">🎁</span>
+        Sugestão de presente
+      </button>
 
       <div class="info-box rsvp">
         <span class="label">Confirmação de presença</span>
@@ -563,5 +699,58 @@
       Contamos com você nessa missão!
     </footer>
   </div>
+
+  <div class="modal-overlay" id="gift-modal" role="dialog" aria-modal="true" aria-labelledby="gift-modal-title" hidden>
+    <div class="modal-card">
+      <button type="button" class="modal-close" id="gift-modal-close" aria-label="Fechar">×</button>
+      <h2 class="modal-title" id="gift-modal-title">Sugestão de presente</h2>
+      <div class="modal-gift-item">
+        <span class="ico" aria-hidden="true">👟</span>
+        <p>Calçado tamanho <strong>25</strong></p>
+      </div>
+      <div class="modal-gift-item">
+        <span class="ico" aria-hidden="true">👕</span>
+        <p>Roupas tamanho <strong>3 ou 4 anos</strong></p>
+      </div>
+      <button type="button" class="modal-ok" id="gift-modal-ok">Entendi!</button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var btn = document.getElementById("btn-gift");
+      var modal = document.getElementById("gift-modal");
+      var closeBtn = document.getElementById("gift-modal-close");
+      var okBtn = document.getElementById("gift-modal-ok");
+
+      function openModal() {
+        modal.hidden = false;
+        requestAnimationFrame(function () {
+          modal.classList.add("is-open");
+        });
+        document.body.style.overflow = "hidden";
+        closeBtn.focus();
+      }
+
+      function closeModal() {
+        modal.classList.remove("is-open");
+        document.body.style.overflow = "";
+        setTimeout(function () {
+          modal.hidden = true;
+          btn.focus();
+        }, 300);
+      }
+
+      btn.addEventListener("click", openModal);
+      closeBtn.addEventListener("click", closeModal);
+      okBtn.addEventListener("click", closeModal);
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) closeModal();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+      });
+    })();
+  </script>
 </body>
 </html>
