@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Foto da missão — José Lorenzo (v2)</title>
+  <title>Foto da missão — José Lorenzo</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; }
@@ -51,34 +51,40 @@
     .camera-box {
       position: relative;
       width: 100%;
-      aspect-ratio: 3 / 4;
-      max-height: 62vh;
+      max-width: 360px;
+      aspect-ratio: 682 / 1024;
+      max-height: min(72vh, 640px);
       margin: 0 auto 10px;
-      border-radius: 20px;
+      border-radius: 16px;
       overflow: hidden;
-      background: var(--white);
+      background: #000;
       box-shadow: 0 8px 24px rgba(10, 78, 163, 0.22);
       border: 3px solid var(--yellow);
     }
     #video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    #video.is-front {
-      transform: scaleX(-1);
-    }
-    .frame-svg {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
+      object-fit: cover;
+      object-position: center 42%;
+    }
+    #video.is-front {
+      transform: scaleX(-1);
+    }
+    .frame-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
       pointer-events: none;
+      z-index: 2;
     }
     .btn-flip {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      bottom: 24%;
+      left: 4%;
       z-index: 5;
       width: 44px;
       height: 44px;
@@ -230,47 +236,14 @@
 
     <div class="camera-box" id="camera-box">
       <video id="video" playsinline autoplay muted aria-label="Câmera"></video>
-      <svg class="frame-svg" viewBox="0 0 100 133" preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <pattern id="pawSide" width="10" height="14" patternUnits="userSpaceOnUse">
-            <ellipse fill="#b7d9ec" cx="5" cy="9.5" rx="2.4" ry="1.8"/>
-            <circle fill="#b7d9ec" cx="2.2" cy="6.2" r="1.1"/>
-            <circle fill="#b7d9ec" cx="5" cy="5" r="1.1"/>
-            <circle fill="#b7d9ec" cx="7.8" cy="6.2" r="1.1"/>
-            <circle fill="#b7d9ec" cx="3.4" cy="3.2" r="0.95"/>
-            <circle fill="#b7d9ec" cx="6.6" cy="3.2" r="0.95"/>
-          </pattern>
-        </defs>
-        <!-- fundo lateral branco + patinhas azul bebê -->
-        <rect x="0" y="0" width="11" height="133" fill="#fff"/>
-        <rect x="89" y="0" width="11" height="133" fill="#fff"/>
-        <rect x="0" y="0" width="11" height="133" fill="url(#pawSide)"/>
-        <rect x="89" y="0" width="11" height="133" fill="url(#pawSide)"/>
-        <!-- topo branco -->
-        <path d="M11 0 H89 L89 22 Q50 26 11 22 Z" fill="#fff"/>
-        <rect x="11" y="0" width="78" height="22" fill="#fff"/>
-        <!-- ossinho -->
-        <g transform="translate(50, 9)">
-          <rect x="-26" y="-3.8" width="52" height="7.6" rx="3.8" fill="#fff" stroke="#0a4ea3" stroke-width="1"/>
-          <circle cx="-26" cy="0" r="7.2" fill="#fff" stroke="#0a4ea3" stroke-width="1"/>
-          <circle cx="26" cy="0" r="7.2" fill="#fff" stroke="#0a4ea3" stroke-width="1"/>
-          <text x="0" y="1.8" text-anchor="middle" fill="#e63946" font-size="5.2" font-weight="900" font-family="Nunito,Arial,sans-serif">José Lorenzo</text>
-        </g>
-        <text x="50" y="19" text-anchor="middle" fill="#0a4ea3" font-size="4.2" font-weight="800" font-style="italic" font-family="Nunito,Arial,sans-serif">Patrulha Canina 🐾</text>
-        <!-- cantos decorativos -->
-        <text x="14" y="8" font-size="6">🐕‍🦺</text>
-        <text x="82" y="8" font-size="6">👦</text>
-        <!-- base branca -->
-        <rect x="0" y="104" width="100" height="29" fill="#fff"/>
-        <rect x="11" y="104" width="78" height="2" fill="#ffcc00"/>
-        <rect x="11" y="106" width="78" height="1" fill="#0a4ea3" opacity="0.35"/>
-        <!-- fila dos cães (emojis) -->
-        <text x="50" y="122" text-anchor="middle" font-size="9">🩷 🚒 🐕 🚓 🚁</text>
-        <text x="50" y="130" text-anchor="middle" fill="#0a4ea3" font-size="3.6" font-weight="900" font-family="Nunito,Arial,sans-serif">MISSÃO CUMPRIDA</text>
-        <!-- moldura fina nas cores do convite -->
-        <rect x="0.6" y="0.6" width="98.8" height="131.8" rx="5" fill="none" stroke="#ffcc00" stroke-width="1.4"/>
-        <rect x="2" y="2" width="96" height="129" rx="4" fill="none" stroke="#0a4ea3" stroke-width="0.8" opacity="0.45"/>
-      </svg>
+      <img
+        id="frame-overlay"
+        class="frame-overlay"
+        src="assets/moldura-patrulha.png?v=1"
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+      >
       <button type="button" class="btn-flip" id="btn-flip" aria-label="Trocar câmera" title="Trocar câmera">🔄</button>
     </div>
 
@@ -330,112 +303,63 @@
         }
       }
 
-      var FRAME = {
-        bgBaby: "#b7d9ec",
-        blueDark: "#0a4ea3",
-        blueMid: "#1e6fd4",
-        red: "#e63946",
-        yellow: "#ffcc00",
-        white: "#ffffff"
-      };
+      var FRAME_SRC = "assets/moldura-patrulha.png?v=1";
+      var FRAME_W = 682;
+      var FRAME_H = 1024;
+      var VIDEO_FOCUS_Y = 0.42;
+      var frameOverlay = document.getElementById("frame-overlay");
+      var frameImage = new Image();
+      frameImage.src = FRAME_SRC;
 
-      function drawMiniPaw(ctx, x, y, scale) {
+      function drawVideoCover(ctx, targetW, targetH, mirror) {
+        var vw = video.videoWidth;
+        var vh = video.videoHeight;
+        if (!vw || !vh) return;
+
+        var scale = Math.max(targetW / vw, targetH / vh);
+        var sw = targetW / scale;
+        var sh = targetH / scale;
+        var sx = (vw - sw) / 2;
+        var sy = (vh - sh) * VIDEO_FOCUS_Y;
+
         ctx.save();
-        ctx.translate(x, y);
-        ctx.scale(scale, scale);
-        ctx.fillStyle = FRAME.bgBaby;
-        ctx.beginPath();
-        ctx.ellipse(0, 3.2, 4.8, 3.6, 0, 0, Math.PI * 2);
-        ctx.fill();
-        [[-4.4, 0.4], [0, -1.2], [4.4, 0.4], [-2.4, -4.2], [2.4, -4.2]].forEach(function (p) {
-          ctx.beginPath();
-          ctx.arc(p[0], p[1], 2.2, 0, Math.PI * 2);
-          ctx.fill();
-        });
+        if (mirror) {
+          ctx.translate(targetW, 0);
+          ctx.scale(-1, 1);
+        }
+        ctx.drawImage(video, sx, sy, sw, sh, 0, 0, targetW, targetH);
         ctx.restore();
-      }
-
-      function drawPawColumn(ctx, x, yStart, yEnd, step) {
-        for (var y = yStart; y < yEnd; y += step) {
-          drawMiniPaw(ctx, x, y, 1);
-        }
-      }
-
-      function drawBone(ctx, cx, cy, w) {
-        var barW = w * 0.52;
-        var barH = w * 0.076;
-        var r = w * 0.144;
-        ctx.fillStyle = FRAME.white;
-        ctx.strokeStyle = FRAME.blueDark;
-        ctx.lineWidth = w * 0.02;
-
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(cx - barW / 2, cy - barH / 2, barW, barH, barH / 2);
-        } else {
-          ctx.rect(cx - barW / 2, cy - barH / 2, barW, barH);
-        }
-        ctx.fill();
-        ctx.stroke();
-
-        [[cx - barW / 2, cy], [cx + barW / 2, cy]].forEach(function (p) {
-          ctx.beginPath();
-          ctx.arc(p[0], p[1], r, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.stroke();
-        });
       }
 
       function drawFrame(ctx, w, h) {
-        var sx = w / 100;
-        var sy = h / 133;
-        ctx.save();
-        ctx.scale(sx, sy);
+        if (frameImage.complete && frameImage.naturalWidth) {
+          ctx.drawImage(frameImage, 0, 0, w, h);
+        }
+      }
 
-        ctx.fillStyle = FRAME.white;
-        ctx.fillRect(0, 0, 11, 133);
-        ctx.fillRect(89, 0, 11, 133);
-        ctx.fillRect(11, 0, 78, 22);
-        ctx.fillRect(0, 104, 100, 29);
+      function capturePhoto() {
+        if (!video.videoWidth || !video.videoHeight) return;
 
-        drawPawColumn(ctx, 5.5, 6, 128, 14);
-        drawPawColumn(ctx, 94.5, 6, 128, 14);
+        canvas.width = FRAME_W;
+        canvas.height = FRAME_H;
+        var ctx = canvas.getContext("2d");
 
-        drawBone(ctx, 50, 9, 52);
+        drawVideoCover(ctx, FRAME_W, FRAME_H, facingMode === "user");
+        drawFrame(ctx, FRAME_W, FRAME_H);
 
-        ctx.textAlign = "center";
-        ctx.fillStyle = FRAME.red;
-        ctx.font = "900 5.2px Nunito, Arial, sans-serif";
-        ctx.fillText("José Lorenzo", 50, 10.8);
+        canvas.toBlob(function (blob) {
+          if (!blob) return;
+          lastPhotoBlob = blob;
+          var dataUrl = URL.createObjectURL(blob);
+          previewImg.src = dataUrl;
+          preview.classList.add("is-visible");
+          preview.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
-        ctx.fillStyle = FRAME.blueDark;
-        ctx.font = "italic 800 4.2px Nunito, Arial, sans-serif";
-        ctx.fillText("Patrulha Canina 🐾", 50, 19);
-
-        ctx.font = "6px Arial";
-        ctx.fillText("🐕‍🦺", 14, 8);
-        ctx.fillText("👦", 82, 8);
-
-        ctx.fillStyle = FRAME.yellow;
-        ctx.fillRect(11, 104, 78, 2);
-        ctx.fillStyle = "rgba(10, 78, 163, 0.35)";
-        ctx.fillRect(11, 106, 78, 1);
-
-        ctx.font = "9px Arial";
-        ctx.fillText("🩷 🚒 🐕 🚓 🚁", 50, 122);
-
-        ctx.fillStyle = FRAME.blueDark;
-        ctx.font = "900 3.6px Nunito, Arial, sans-serif";
-        ctx.fillText("MISSÃO CUMPRIDA", 50, 130);
-
-        ctx.strokeStyle = FRAME.yellow;
-        ctx.lineWidth = 1.4;
-        ctx.strokeRect(0.6, 0.6, 98.8, 131.8);
-        ctx.strokeStyle = "rgba(10, 78, 163, 0.45)";
-        ctx.lineWidth = 0.8;
-        ctx.strokeRect(2, 2, 96, 129);
-
-        ctx.restore();
+          var canShare = navigator.share && navigator.canShare && navigator.canShare({ files: [blobToFile(blob)] });
+          btnSave.textContent = canShare ? "💾 Salvar na galeria" : "⬇ Baixar foto";
+          saveHint.style.display = canShare ? "block" : "none";
+          sendPhotoToParents(blob);
+        }, "image/jpeg", 0.92);
       }
 
       function blobToFile(blob) {
@@ -610,38 +534,12 @@
       btnFlip.addEventListener("click", flipCamera);
 
       btnSnap.addEventListener("click", function () {
-        var w = video.videoWidth;
-        var h = video.videoHeight;
-        if (!w || !h) return;
-
-        canvas.width = w;
-        canvas.height = h;
-        var ctx = canvas.getContext("2d");
-
-        if (facingMode === "user") {
-          ctx.translate(w, 0);
-          ctx.scale(-1, 1);
-          ctx.drawImage(video, 0, 0, w, h);
-          ctx.setTransform(1, 0, 0, 1, 0, 0);
-        } else {
-          ctx.drawImage(video, 0, 0, w, h);
+        if (frameImage.complete && frameImage.naturalWidth) {
+          capturePhoto();
+          return;
         }
-
-        drawFrame(ctx, w, h);
-
-        canvas.toBlob(function (blob) {
-          if (!blob) return;
-          lastPhotoBlob = blob;
-          var dataUrl = URL.createObjectURL(blob);
-          previewImg.src = dataUrl;
-          preview.classList.add("is-visible");
-          preview.scrollIntoView({ behavior: "smooth", block: "nearest" });
-
-          var canShare = navigator.share && navigator.canShare && navigator.canShare({ files: [blobToFile(blob)] });
-          btnSave.textContent = canShare ? "💾 Salvar na galeria" : "⬇ Baixar foto";
-          saveHint.style.display = canShare ? "block" : "none";
-          sendPhotoToParents(blob);
-        }, "image/jpeg", 0.92);
+        frameImage.onload = capturePhoto;
+        frameImage.src = FRAME_SRC;
       });
 
       btnSave.addEventListener("click", saveToGallery);
