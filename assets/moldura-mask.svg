@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 682 1024" width="682" height="1024">
-  <!-- Branco = moldura visível; preto = buraco da câmera -->
-  <rect width="682" height="1024" fill="white"/>
-  <rect x="108" y="212" width="462" height="535" rx="26" ry="26" fill="black"/>
-</svg>

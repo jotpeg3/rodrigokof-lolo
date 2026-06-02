@@ -83,15 +83,6 @@
       object-fit: fill;
       pointer-events: none;
       z-index: 2;
-      transform: translateZ(0);
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-      -webkit-mask-image: url("assets/moldura-mask.svg?v=1");
-      mask-image: url("assets/moldura-mask.svg?v=1");
-      -webkit-mask-size: 100% 100%;
-      mask-size: 100% 100%;
-      -webkit-mask-repeat: no-repeat;
-      mask-repeat: no-repeat;
     }
     .btn-flip {
       position: absolute;
@@ -252,7 +243,7 @@
       <img
         id="frame-overlay"
         class="frame-overlay"
-        src="assets/moldura-patrulha.png?v=4"
+        src="assets/moldura-patrulha.png?v=5"
         alt=""
         aria-hidden="true"
         decoding="async"
@@ -316,11 +307,10 @@
         }
       }
 
-      var FRAME_SRC = "assets/moldura-patrulha.png?v=4";
+      var FRAME_SRC = "assets/moldura-patrulha.png?v=5";
       var FRAME_W = 682;
       var FRAME_H = 1024;
       var VIDEO_FOCUS_Y = 0.42;
-      var FRAME_WINDOW = { l: 108, t: 212, r: 570, b: 747, rad: 26 };
       var frameReady = false;
       var frameImage = new Image();
       frameImage.onload = function () {
@@ -351,37 +341,11 @@
         ctx.restore();
       }
 
-      function roundRectPath(ctx, x, y, width, height, radius) {
-        var r = Math.min(radius, width / 2, height / 2);
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.lineTo(x + width - r, y);
-        ctx.quadraticCurveTo(x + width, y, x + width, y + r);
-        ctx.lineTo(x + width, y + height - r);
-        ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
-        ctx.lineTo(x + r, y + height);
-        ctx.quadraticCurveTo(x, y + height, x, y + height - r);
-        ctx.lineTo(x, y + r);
-        ctx.quadraticCurveTo(x, y, x + r, y);
-        ctx.closePath();
-      }
-
-      function punchCameraWindow(ctx) {
-        var win = FRAME_WINDOW;
-        ctx.save();
-        ctx.globalCompositeOperation = "destination-out";
-        ctx.fillStyle = "#000";
-        roundRectPath(ctx, win.l, win.t, win.r - win.l, win.b - win.t, win.rad);
-        ctx.fill();
-        ctx.restore();
-      }
-
       function drawFrame(ctx, w, h) {
         if (!frameReady) return;
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
         ctx.drawImage(frameImage, 0, 0, w, h);
-        punchCameraWindow(ctx);
       }
 
       function capturePhoto() {
