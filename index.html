@@ -164,18 +164,35 @@
       line-height: 1;
     }
 
-    .hero-banner {
-      display: block;
-      margin: 10px 0 0;
-      padding: 9px 12px;
-      background: var(--bg-baby);
-      border-radius: 10px;
-      font-size: clamp(0.8rem, 3.5vw, 0.92rem);
-      font-weight: 800;
-      line-height: 1.3;
-      color: var(--blue-dark);
-      border: 3px solid var(--red);
-      box-shadow: var(--shadow);
+    /* Botões de ação logo abaixo do título (ex-banner) */
+    .hero-cta {
+      margin: 8px 0 0;
+      gap: 8px;
+    }
+
+    .hero-cta .btn-gift,
+    .hero-cta .info-box.rsvp {
+      animation: cta-pulse 1.5s ease-in-out infinite;
+    }
+
+    .hero-cta .info-box.rsvp {
+      animation-delay: 0.75s;
+    }
+
+    @keyframes cta-pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+        filter: brightness(1);
+      }
+      50% {
+        transform: scale(1.03);
+        box-shadow:
+          0 4px 0 rgba(0, 0, 0, 0.2),
+          0 0 0 3px rgba(255, 204, 0, 0.95),
+          0 0 18px rgba(255, 204, 0, 0.55);
+        filter: brightness(1.06);
+      }
     }
 
     /* —— Main card —— */
@@ -365,7 +382,7 @@
     .mission-text .skye { color: #ff9ecd; }
 
     /* —— Botão presente + RSVP —— */
-    .footer-grid .info-box.rsvp .label {
+    .hero-cta .info-box.rsvp .label {
       text-align: center;
       margin-bottom: 8px;
       font-size: 0.64rem;
@@ -588,7 +605,9 @@
     @media (prefers-reduced-motion: reduce) {
       .modal-overlay,
       .modal-card,
-      .modal-gift-item {
+      .modal-gift-item,
+      .hero-cta .btn-gift,
+      .hero-cta .info-box.rsvp {
         transition: none;
         animation: none;
       }
@@ -766,9 +785,25 @@
         <span class="deco deco-br" aria-hidden="true">🚒</span>
       </div>
 
-      <p class="hero-banner">
-        Você está convidado para uma missão muito divertida!
-      </p>
+      <div class="grid-2 hero-cta">
+        <button type="button" class="btn-gift" id="btn-gift" aria-haspopup="dialog" aria-controls="gift-modal">
+          <span class="gift-icon" aria-hidden="true">🎁</span>
+          Sugestão de presente
+        </button>
+
+        <div class="info-box rsvp">
+          <span class="label">Confirmação de presença</span>
+          <a
+            class="btn-whatsapp"
+            href="https://wa.me/5581994830573?text=Ol%C3%A1!%20Confirmo%20presen%C3%A7a%20na%20festa%20do%20Jos%C3%A9%20Lorenzo%20%F0%9F%90%BE"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            WhatsApp
+          </a>
+          <p class="rsvp-phone">(81) 99483-0573</p>
+        </div>
+      </div>
     </header>
 
     <section class="card-main">
@@ -829,26 +864,6 @@
       </p>
       <span class="dog" aria-hidden="true">🦺</span>
     </section>
-
-    <div class="grid-2 footer-grid">
-      <button type="button" class="btn-gift" id="btn-gift" aria-haspopup="dialog" aria-controls="gift-modal">
-        <span class="gift-icon" aria-hidden="true">🎁</span>
-        Sugestão de presente
-      </button>
-
-      <div class="info-box rsvp">
-        <span class="label">Confirmação de presença</span>
-        <a
-          class="btn-whatsapp"
-          href="https://wa.me/5581994830573?text=Ol%C3%A1!%20Confirmo%20presen%C3%A7a%20na%20festa%20do%20Jos%C3%A9%20Lorenzo%20%F0%9F%90%BE"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          WhatsApp
-        </a>
-        <p class="rsvp-phone">(81) 99483-0573</p>
-      </div>
-    </div>
 
     <footer class="closing">
       <span class="badge" aria-hidden="true">🛡️</span>
