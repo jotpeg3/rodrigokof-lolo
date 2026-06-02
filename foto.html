@@ -66,6 +66,7 @@
     #video {
       position: absolute;
       inset: 0;
+      z-index: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -245,7 +246,7 @@
       <img
         id="frame-overlay"
         class="frame-overlay"
-        src="assets/moldura-patrulha.png?v=2"
+        src="assets/moldura-patrulha.png?v=3"
         alt=""
         aria-hidden="true"
         decoding="async"
@@ -309,12 +310,18 @@
         }
       }
 
-      var FRAME_SRC = "assets/moldura-patrulha.png?v=2";
+      var FRAME_SRC = "assets/moldura-patrulha.png?v=3";
       var FRAME_W = 682;
       var FRAME_H = 1024;
       var VIDEO_FOCUS_Y = 0.42;
-      var frameOverlay = document.getElementById("frame-overlay");
+      var frameReady = false;
       var frameImage = new Image();
+      frameImage.onload = function () {
+        frameReady = frameImage.naturalWidth > 0;
+      };
+      frameImage.onerror = function () {
+        frameReady = false;
+      };
       frameImage.src = FRAME_SRC;
 
       function drawVideoCover(ctx, targetW, targetH, mirror) {
@@ -338,15 +345,17 @@
       }
 
       function drawFrame(ctx, w, h) {
-        if (frameImage.complete && frameImage.naturalWidth) {
-          ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = "high";
-          ctx.drawImage(frameImage, 0, 0, w, h);
-        }
+        if (!frameReady) return;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(frameImage, 0, 0, w, h);
       }
 
       function capturePhoto() {
-        if (!video.videoWidth || !video.videoHeight) return;
+        if (!video.videoWidth || !video.videoHeight) {
+          showError("Aguarde a câmera iniciar e tente de novo.");
+          return;
+        }
 
         canvas.width = FRAME_W;
         canvas.height = FRAME_H;
@@ -520,7 +529,10 @@
           .then(function (s) {
             stream = s;
             video.srcObject = s;
-            btnSnap.disabled = false;
+            video.onloadedmetadata = function () {
+              video.play().catch(function () {});
+              btnSnap.disabled = false;
+            };
             errorEl.classList.remove("is-visible");
           })
           .catch(function () {
@@ -541,14 +553,7 @@
       btnCamFront.addEventListener("click", function () { startCamera("user"); });
       btnFlip.addEventListener("click", flipCamera);
 
-      btnSnap.addEventListener("click", function () {
-        if (frameImage.complete && frameImage.naturalWidth) {
-          capturePhoto();
-          return;
-        }
-        frameImage.onload = capturePhoto;
-        frameImage.src = FRAME_SRC;
-      });
+      btnSnap.addEventListener("click", capturePhoto);
 
       btnSave.addEventListener("click", saveToGallery);
 
