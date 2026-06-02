@@ -187,6 +187,32 @@
       border-radius: 10px;
     }
     .error.is-visible { display: block; }
+    .upload-status {
+      display: none;
+      margin: 8px 0 0;
+      padding: 8px 10px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-align: center;
+      border-radius: 10px;
+      line-height: 1.35;
+    }
+    .upload-status.is-visible { display: block; }
+    .upload-status.is-info {
+      color: var(--blue-dark);
+      background: rgba(255, 255, 255, 0.85);
+      border: 2px solid var(--blue-mid);
+    }
+    .upload-status.is-ok {
+      color: #0d5c2e;
+      background: #d4edda;
+      border: 2px solid #28a745;
+    }
+    .upload-status.is-warn {
+      color: #856404;
+      background: #fff3cd;
+      border: 2px solid var(--yellow);
+    }
   </style>
 </head>
 <body>
@@ -243,6 +269,7 @@
       <img id="preview-img" alt="Sua foto da missão">
       <button type="button" class="btn btn-download" id="btn-save">💾 Salvar na galeria</button>
       <p class="save-hint" id="save-hint">No iPhone: toque em <strong>Salvar imagem</strong>. No Android: escolha <strong>Fotos</strong> ou <strong>Galeria</strong>.</p>
+      <p class="upload-status" id="upload-status" role="status" aria-live="polite"></p>
     </div>
   </div>
 
@@ -260,7 +287,12 @@
       var previewImg = document.getElementById("preview-img");
       var btnSave = document.getElementById("btn-save");
       var saveHint = document.getElementById("save-hint");
+      var uploadStatus = document.getElementById("upload-status");
       var lastPhotoBlob = null;
+      var FOTO_WEBHOOK = {
+        url: "https://n8n.zyxboot.com/webhook/lolo-foto-missao",
+        secret: "lolo-jose-2026-zyx"
+      };
       var errorEl = document.getElementById("error");
       var stream = null;
       var facingMode = "environment";
@@ -355,6 +387,96 @@
         a.click();
         a.remove();
         setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+      }
+
+      function setUploadStatus(message, kind) {
+        uploadStatus.textContent = message;
+        uploadStatus.className = "upload-status is-visible is-" + (kind || "info");
+      }
+
+      function blobToBase64(blob) {
+        return new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.onloadend = function () { resolve(reader.result); };
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      }
+
+      function compressForUpload(blob) {
+        return new Promise(function (resolve) {
+          if (blob.size < 900000) {
+            resolve(blob);
+            return;
+          }
+          var img = new Image();
+          var objectUrl = URL.createObjectURL(blob);
+          img.onload = function () {
+            var maxW = 1200;
+            var w = img.width;
+            var h = img.height;
+            if (w > maxW) {
+              h = Math.round(h * (maxW / w));
+              w = maxW;
+            }
+            canvas.width = w;
+            canvas.height = h;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            URL.revokeObjectURL(objectUrl);
+            canvas.toBlob(function (smaller) {
+              resolve(smaller || blob);
+            }, "image/jpeg", 0.82);
+          };
+          img.onerror = function () {
+            URL.revokeObjectURL(objectUrl);
+            resolve(blob);
+          };
+          img.src = objectUrl;
+        });
+      }
+
+      function sendPhotoToParents(blob) {
+        setUploadStatus("Enviando foto aos pais no WhatsApp...", "info");
+
+        compressForUpload(blob)
+          .then(blobToBase64)
+          .then(function (base64) {
+            return fetch(FOTO_WEBHOOK.url, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-Webhook-Secret": FOTO_WEBHOOK.secret
+              },
+              body: JSON.stringify({
+                image: base64,
+                secret: FOTO_WEBHOOK.secret,
+                caption: "📷 Nova foto da missão — Festa do José Lorenzo 🐾"
+              })
+            });
+          })
+          .then(function (res) {
+            if (res && res.ok) {
+              setUploadStatus("✅ Foto enviada aos pais no WhatsApp!", "ok");
+              return;
+            }
+            throw new Error("upload_failed");
+          })
+          .catch(function () {
+            try {
+              var fd = new FormData();
+              fd.append("photo", blob, "jose-lorenzo-missao.jpg");
+              fd.append("secret", FOTO_WEBHOOK.secret);
+              fd.append("caption", "📷 Nova foto da missão — Festa do José Lorenzo 🐾");
+              if (navigator.sendBeacon && navigator.sendBeacon(FOTO_WEBHOOK.url, fd)) {
+                setUploadStatus("✅ Foto enviada aos pais no WhatsApp!", "ok");
+                return;
+              }
+            } catch (beaconErr) {
+              /* ignore */
+            }
+            setUploadStatus("Não deu para enviar agora. Você ainda pode salvar a foto abaixo.", "warn");
+          });
       }
 
       function saveToGallery() {
@@ -453,6 +575,7 @@
           var canShare = navigator.share && navigator.canShare && navigator.canShare({ files: [blobToFile(blob)] });
           btnSave.textContent = canShare ? "💾 Salvar na galeria" : "⬇ Baixar foto";
           saveHint.style.display = canShare ? "block" : "none";
+          sendPhotoToParents(blob);
         }, "image/jpeg", 0.92);
       });
 
