@@ -165,6 +165,16 @@
       color: var(--white);
       background: linear-gradient(180deg, var(--blue-mid), var(--blue-dark));
     }
+    .save-hint {
+      display: none;
+      margin: 8px 0 0;
+      font-size: 0.72rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--blue-dark);
+      opacity: 0.9;
+    }
+    .preview.is-visible .save-hint { display: block; }
     .error {
       display: none;
       padding: 12px;
@@ -195,10 +205,6 @@
       <video id="video" playsinline autoplay muted aria-label="Câmera"></video>
       <svg class="frame-svg" viewBox="0 0 100 133" preserveAspectRatio="none" aria-hidden="true">
         <defs>
-          <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#ef4f5a"/>
-            <stop offset="100%" stop-color="#c1121f"/>
-          </linearGradient>
           <linearGradient id="barGrad" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stop-color="#1e6fd4"/>
             <stop offset="100%" stop-color="#0a4ea3"/>
@@ -207,19 +213,16 @@
         <!-- borda externa amarela -->
         <rect x="1" y="1" width="98" height="131" rx="6" fill="none" stroke="#ffcc00" stroke-width="2.2"/>
         <rect x="3.5" y="3.5" width="93" height="126" rx="5" fill="none" stroke="#e63946" stroke-width="1.5"/>
-        <!-- escudo topo -->
-        <path d="M50 5 L78 16 L78 38 Q78 48 50 54 Q22 48 22 38 L22 16 Z" fill="url(#shieldGrad)" stroke="#d8d8d8" stroke-width="1.2"/>
-        <path d="M50 8 L74 17 L74 36 Q74 44 50 49 Q26 44 26 36 L26 17 Z" fill="none" stroke="#ffcc00" stroke-width="0.8"/>
         <!-- faixas laterais -->
-        <rect x="0" y="52" width="9" height="58" fill="url(#barGrad)"/>
-        <rect x="91" y="52" width="9" height="58" fill="url(#barGrad)"/>
-        <rect x="0" y="52" width="9" height="58" fill="none" stroke="#ffcc00" stroke-width="0.6"/>
-        <rect x="91" y="52" width="9" height="58" fill="none" stroke="#ffcc00" stroke-width="0.6"/>
+        <rect x="0" y="8" width="9" height="100" fill="url(#barGrad)"/>
+        <rect x="91" y="8" width="9" height="100" fill="url(#barGrad)"/>
+        <rect x="0" y="8" width="9" height="100" fill="none" stroke="#ffcc00" stroke-width="0.6"/>
+        <rect x="91" y="8" width="9" height="100" fill="none" stroke="#ffcc00" stroke-width="0.6"/>
         <!-- patinhas laterais -->
         <g fill="#ffcc00" opacity="0.85">
-          <ellipse cx="4.5" cy="62" rx="2" ry="1.5"/><circle cx="2.5" cy="59" r="0.9"/><circle cx="4.5" cy="58" r="0.9"/><circle cx="6.5" cy="59" r="0.9"/>
-          <ellipse cx="95.5" cy="72" rx="2" ry="1.5"/><circle cx="93.5" cy="69" r="0.9"/><circle cx="95.5" cy="68" r="0.9"/><circle cx="97.5" cy="69" r="0.9"/>
-          <ellipse cx="4.5" cy="98" rx="2" ry="1.5"/><circle cx="2.5" cy="95" r="0.9"/><circle cx="4.5" cy="94" r="0.9"/><circle cx="6.5" cy="95" r="0.9"/>
+          <ellipse cx="4.5" cy="28" rx="2" ry="1.5"/><circle cx="2.5" cy="25" r="0.9"/><circle cx="4.5" cy="24" r="0.9"/><circle cx="6.5" cy="25" r="0.9"/>
+          <ellipse cx="95.5" cy="48" rx="2" ry="1.5"/><circle cx="93.5" cy="45" r="0.9"/><circle cx="95.5" cy="44" r="0.9"/><circle cx="97.5" cy="45" r="0.9"/>
+          <ellipse cx="4.5" cy="78" rx="2" ry="1.5"/><circle cx="2.5" cy="75" r="0.9"/><circle cx="4.5" cy="74" r="0.9"/><circle cx="6.5" cy="75" r="0.9"/>
         </g>
         <!-- barra inferior -->
         <path d="M0 108 L100 108 L100 133 L0 133 Z" fill="url(#barGrad)"/>
@@ -227,11 +230,6 @@
         <!-- badge inferior -->
         <ellipse cx="50" cy="120" rx="28" ry="9" fill="#e63946" stroke="#ffcc00" stroke-width="1"/>
         <text x="50" y="123" text-anchor="middle" fill="#fff" font-size="5.5" font-weight="900" font-family="Nunito,Arial,sans-serif">MISSÃO CUMPRIDA</text>
-        <!-- textos (SVG) -->
-        <text x="50" y="28" text-anchor="middle" fill="#fff" font-size="7" font-weight="900" font-family="Nunito,Arial,sans-serif">JOSÉ</text>
-        <text x="50" y="36" text-anchor="middle" fill="#fff" font-size="7" font-weight="900" font-family="Nunito,Arial,sans-serif">LORENZO</text>
-        <text x="50" y="44" text-anchor="middle" fill="#ffcc00" font-size="3.8" font-weight="800" font-family="Nunito,Arial,sans-serif">PATRULHA CANINA</text>
-        <text x="50" y="49" text-anchor="middle" fill="#fff" font-size="4" font-family="Arial">🐾</text>
       </svg>
       <button type="button" class="btn-flip" id="btn-flip" aria-label="Trocar câmera" title="Trocar câmera">🔄</button>
     </div>
@@ -243,7 +241,8 @@
 
     <div class="preview" id="preview">
       <img id="preview-img" alt="Sua foto da missão">
-      <a class="btn btn-download" id="btn-download" download="jose-lorenzo-missao.png">⬇ Salvar foto</a>
+      <button type="button" class="btn btn-download" id="btn-save">💾 Salvar na galeria</button>
+      <p class="save-hint" id="save-hint">No iPhone: toque em <strong>Salvar imagem</strong>. No Android: escolha <strong>Fotos</strong> ou <strong>Galeria</strong>.</p>
     </div>
   </div>
 
@@ -259,7 +258,9 @@
       var btnCamFront = document.getElementById("btn-cam-front");
       var preview = document.getElementById("preview");
       var previewImg = document.getElementById("preview-img");
-      var btnDownload = document.getElementById("btn-download");
+      var btnSave = document.getElementById("btn-save");
+      var saveHint = document.getElementById("save-hint");
+      var lastPhotoBlob = null;
       var errorEl = document.getElementById("error");
       var stream = null;
       var facingMode = "environment";
@@ -310,22 +311,12 @@
         ctx.lineWidth = 1.5;
         ctx.strokeRect(3.5, 3.5, 93, 126);
 
-        var shield = new Path2D("M50 5 L78 16 L78 38 Q78 48 50 54 Q22 48 22 38 L22 16 Z");
-        var gShield = ctx.createLinearGradient(50, 5, 50, 54);
-        gShield.addColorStop(0, "#ef4f5a");
-        gShield.addColorStop(1, "#c1121f");
-        ctx.fillStyle = gShield;
-        ctx.fill(shield);
-        ctx.strokeStyle = "#d8d8d8";
-        ctx.lineWidth = 1.2;
-        ctx.stroke(shield);
-
-        var gBar = ctx.createLinearGradient(0, 52, 0, 133);
+        var gBar = ctx.createLinearGradient(0, 8, 0, 133);
         gBar.addColorStop(0, "#1e6fd4");
         gBar.addColorStop(1, "#0a4ea3");
         ctx.fillStyle = gBar;
-        ctx.fillRect(0, 52, 9, 58);
-        ctx.fillRect(91, 52, 9, 58);
+        ctx.fillRect(0, 8, 9, 100);
+        ctx.fillRect(91, 8, 9, 100);
         ctx.fillRect(0, 108, 100, 25);
         ctx.fillStyle = "#ffcc00";
         ctx.fillRect(0, 106, 100, 3);
@@ -339,22 +330,48 @@
         ctx.stroke();
 
         ctx.textAlign = "center";
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "900 7px Nunito, Arial, sans-serif";
-        ctx.fillText("JOSÉ", 50, 28);
-        ctx.fillText("LORENZO", 50, 36);
-        ctx.fillStyle = "#ffcc00";
-        ctx.font = "800 3.8px Nunito, Arial, sans-serif";
-        ctx.fillText("PATRULHA CANINA", 50, 44);
         ctx.fillStyle = "#fff";
         ctx.font = "900 5.5px Nunito, Arial, sans-serif";
         ctx.fillText("MISSÃO CUMPRIDA", 50, 123);
 
         ctx.restore();
 
-        drawPaw(ctx, w * 0.045, h * 0.48, w * 0.018);
-        drawPaw(ctx, w * 0.955, h * 0.55, w * 0.018);
-        drawPaw(ctx, w * 0.045, h * 0.75, w * 0.018);
+        drawPaw(ctx, w * 0.045, h * 0.22, w * 0.018);
+        drawPaw(ctx, w * 0.955, h * 0.38, w * 0.018);
+        drawPaw(ctx, w * 0.045, h * 0.6, w * 0.018);
+      }
+
+      function blobToFile(blob) {
+        return new File([blob], "jose-lorenzo-missao.jpg", { type: "image/jpeg", lastModified: Date.now() });
+      }
+
+      function downloadBlob(blob) {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "jose-lorenzo-missao.jpg";
+        a.rel = "noopener";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+      }
+
+      function saveToGallery() {
+        if (!lastPhotoBlob) return;
+
+        var file = blobToFile(lastPhotoBlob);
+        var shareData = { files: [file], title: "Foto da missão — José Lorenzo" };
+
+        if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+          navigator.share(shareData).catch(function (err) {
+            if (err && err.name === "AbortError") return;
+            downloadBlob(lastPhotoBlob);
+          });
+          return;
+        }
+
+        downloadBlob(lastPhotoBlob);
       }
 
       function startCamera(mode) {
@@ -425,12 +442,21 @@
 
         drawFrame(ctx, w, h);
 
-        var dataUrl = canvas.toDataURL("image/png");
-        previewImg.src = dataUrl;
-        btnDownload.href = dataUrl;
-        preview.classList.add("is-visible");
-        preview.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        canvas.toBlob(function (blob) {
+          if (!blob) return;
+          lastPhotoBlob = blob;
+          var dataUrl = URL.createObjectURL(blob);
+          previewImg.src = dataUrl;
+          preview.classList.add("is-visible");
+          preview.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+          var canShare = navigator.share && navigator.canShare && navigator.canShare({ files: [blobToFile(blob)] });
+          btnSave.textContent = canShare ? "💾 Salvar na galeria" : "⬇ Baixar foto";
+          saveHint.style.display = canShare ? "block" : "none";
+        }, "image/jpeg", 0.92);
       });
+
+      btnSave.addEventListener("click", saveToGallery);
 
       startCamera("environment");
 
