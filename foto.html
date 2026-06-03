@@ -58,7 +58,7 @@
     .camera-box {
       position: relative;
       width: 100%;
-      aspect-ratio: 682 / 1024;
+      aspect-ratio: 629 / 896;
       margin: 0 0 10px;
       overflow: hidden;
       background: var(--bg-baby);
@@ -243,7 +243,7 @@
       <img
         id="frame-overlay"
         class="frame-overlay"
-        src="assets/moldura-patrulha.png?v=5"
+        src="assets/moldura-patrulha.png?v=6"
         alt=""
         aria-hidden="true"
         decoding="async"
@@ -307,10 +307,10 @@
         }
       }
 
-      var FRAME_SRC = "assets/moldura-patrulha.png?v=5";
-      var FRAME_W = 682;
-      var FRAME_H = 1024;
-      var VIDEO_FOCUS_Y = 0.42;
+      var FRAME_SRC = "assets/moldura-patrulha.png?v=6";
+      var FRAME_W = 629;
+      var FRAME_H = 896;
+      var VIDEO_FOCUS_Y = 0.4;
       var frameReady = false;
       var frameImage = new Image();
       frameImage.onload = function () {
@@ -413,6 +413,7 @@
             return;
           }
           var img = new Image();
+          var uploadCanvas = document.createElement("canvas");
           var objectUrl = URL.createObjectURL(blob);
           img.onload = function () {
             var maxW = 1200;
@@ -422,12 +423,12 @@
               h = Math.round(h * (maxW / w));
               w = maxW;
             }
-            canvas.width = w;
-            canvas.height = h;
-            var ctx = canvas.getContext("2d");
+            uploadCanvas.width = w;
+            uploadCanvas.height = h;
+            var ctx = uploadCanvas.getContext("2d");
             ctx.drawImage(img, 0, 0, w, h);
             URL.revokeObjectURL(objectUrl);
-            canvas.toBlob(function (smaller) {
+            uploadCanvas.toBlob(function (smaller) {
               resolve(smaller || blob);
             }, "image/jpeg", 0.82);
           };
